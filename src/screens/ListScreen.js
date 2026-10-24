@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
-import { getPokemonList } from '../services/pokeApi';
-import PokemonCard from '../components/PokemonCard';
-import LoadingView from '../components/LoadingView';
-import ErrorView from '../components/ErrorView';
-import { spacing } from '../theme/colors';
+import { useEffect, useState } from "react";
+import { View, Text, FlatList, StyleSheet } from "react-native";
+import { getPokemonList } from "../services/pokeApi";
+import PokemonCard from "../components/PokemonCard";
+import LoadingView from "../components/LoadingView";
+import ErrorView from "../components/ErrorView";
+import { spacing } from "../theme/colors";
 
 export default function ListScreen({ onSelect }) {
   const [pokemon, setPokemon] = useState([]);
@@ -19,16 +19,18 @@ export default function ListScreen({ onSelect }) {
     const isFirstLoad = offset === 0 && pokemon.length === 0;
     if (isFirstLoad) setLoading(true);
     else setLoadingMore(true);
-    
+
     setError(null);
 
     try {
       const data = await getPokemonList(offset);
-      setPokemon(prev => isFirstLoad ? data.results : [...prev, ...data.results]);
-      setOffset(prev => prev + 20);
+      setPokemon((prev) =>
+        isFirstLoad ? data.results : [...prev, ...data.results],
+      );
+      setOffset((prev) => prev + 20);
       setHasMore(data.hasMore);
     } catch (err) {
-      setError('No se pudo cargar la lista. Revisa tu conexión.');
+      setError("No se pudo cargar la lista. Revisa tu conexión.");
     } finally {
       // CONCEPTO: finally corre con éxito o con error; aquí apagamos los indicadores
       setLoading(false);
@@ -48,7 +50,7 @@ export default function ListScreen({ onSelect }) {
   };
 
   if (loading) return <LoadingView message="Cargando Pokémon..." />;
-  
+
   // Si error en la primera carga, pantalla completa
   if (error && pokemon.length === 0) {
     return <ErrorView message={error} onRetry={loadPokemon} />;
@@ -61,7 +63,9 @@ export default function ListScreen({ onSelect }) {
         data={pokemon}
         keyExtractor={(item) => String(item.id)}
         numColumns={2}
-        renderItem={({ item }) => <PokemonCard pokemon={item} onPress={onSelect} />}
+        renderItem={({ item }) => (
+          <PokemonCard pokemon={item} onPress={onSelect} />
+        )}
         contentContainerStyle={styles.list}
         onEndReached={handleEndReached}
         onEndReachedThreshold={0.5}

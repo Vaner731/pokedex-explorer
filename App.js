@@ -1,20 +1,25 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { useState } from "react";
+import { SafeAreaView, StyleSheet, StatusBar } from "react-native";
+import ListScreen from "./src/screens/ListScreen";
+import DetailScreen from "./src/screens/DetailScreen";
 
+// CONCEPTO: App.js guarda selectedId
+// null = muestro lista, con id = muestro ficha
 export default function App() {
+  const [selectedId, setSelectedId] = useState(null);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      {selectedId === null ? (
+        <ListScreen onSelectPokemon={setSelectedId} />
+      ) : (
+        <DetailScreen id={selectedId} onBack={() => setSelectedId(null)} />
+      )}
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  container: { flex: 1, backgroundColor: "#F5F5F5" },
 });
