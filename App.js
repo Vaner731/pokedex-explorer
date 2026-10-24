@@ -1,25 +1,27 @@
-import { useState } from "react";
-import { SafeAreaView, StyleSheet, StatusBar } from "react-native";
-import ListScreen from "./src/screens/ListScreen";
-import DetailScreen from "./src/screens/DetailScreen";
-
-// CONCEPTO: App.js guarda selectedId
-// null = muestro lista, con id = muestro ficha
+import { useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+// CONCEPTO: SafeAreaView evita que el contenido quede bajo el notch o la barra de estado
+import { SafeAreaView } from 'react-native-safe-area-context';
+import ListScreen from './src/screens/ListScreen';
+import DetailScreen from './src/screens/DetailScreen';
+import { colors, spacing } from './src/theme/colors';
 export default function App() {
+  // CONCEPTO: useState guarda qué Pokémon está abierto; null significa "mostrar la lista"
   const [selectedId, setSelectedId] = useState(null);
-
+  const isDetailOpen = selectedId !== null;
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
-      {selectedId === null ? (
-        <ListScreen onSelectPokemon={setSelectedId} />
-      ) : (
-        <DetailScreen id={selectedId} onBack={() => setSelectedId(null)} />
-      )}
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar style="dark" />
+      <Text style={styles.title}>PokéDex Explorer</Text>
+      <View style={[styles.flex, isDetailOpen && styles.hidden]}>
+        {/* CONCEPTO: el hijo avisa al padre con una función recibida por props */}
+        <ListScreen onSelect={setSelectedId} />
+      </View>
+      {/* CONCEPTO: renderizado condicional, la ficha solo existe mientras hay un Pokémon elegido */}
+      {isDetailOpen && (<DetailScreen pokemonId={selectedId} onBack={() => setSelectedId(null)} />)}
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F5F5F5" },
-});
+// CONCEPTO: StyleSheet.create define los estilos una vez y se reutilizan por nombre
+const styles = StyleSheet.create({ safeArea: { flex: 1, backgroundColor: colors.background }, title: { fontSize: 26, fontWeight: 'bold', color: colors.primary, textAlign: 'center', paddingVertical: spacing.md }, flex: { flex: 1 }, hidden: { display: 'none' } });
